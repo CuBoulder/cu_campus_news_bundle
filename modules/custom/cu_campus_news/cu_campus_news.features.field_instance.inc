@@ -186,6 +186,110 @@ function cu_campus_news_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance:
+  // 'bean-campus_news_feature-field_campus_news_audience'.
+  $field_instances['bean-campus_news_feature-field_campus_news_audience'] = array(
+    'bundle' => 'campus_news_feature',
+    'default_value' => NULL,
+    'default_value_function' => '',
+    'default_value_php' => '',
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_key',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'bean',
+    'fences_wrapper' => 'no_wrapper',
+    'field_name' => 'field_campus_news_audience',
+    'label' => 'Audience',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 3,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'bean-campus_news_feature-field_campus_news_category'.
+  $field_instances['bean-campus_news_feature-field_campus_news_category'] = array(
+    'bundle' => 'campus_news_feature',
+    'default_value' => NULL,
+    'default_value_function' => '',
+    'default_value_php' => '',
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_key',
+        'weight' => 2,
+      ),
+    ),
+    'entity_type' => 'bean',
+    'fences_wrapper' => 'no_wrapper',
+    'field_name' => 'field_campus_news_category',
+    'label' => 'Category',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 4,
+    ),
+  );
+
+  // Exported field_instance: 'bean-campus_news_feature-field_campus_news_unit'.
+  $field_instances['bean-campus_news_feature-field_campus_news_unit'] = array(
+    'bundle' => 'campus_news_feature',
+    'default_value' => NULL,
+    'default_value_function' => '',
+    'default_value_php' => '',
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_key',
+        'weight' => 1,
+      ),
+    ),
+    'entity_type' => 'bean',
+    'fences_wrapper' => 'no_wrapper',
+    'field_name' => 'field_campus_news_unit',
+    'label' => 'Unit',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 2,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
   t('Audience');
