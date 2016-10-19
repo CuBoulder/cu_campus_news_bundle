@@ -6,6 +6,22 @@
 
 include_once 'cu_campus_news.features.inc';
 
+/**
+* Implements hook_schema().
+*/
+function exove_module_schema() {
+  $schema = array();
+  $schema['cu_campus_news'] = drupal_get_schema_unprocessed('system', 'cache');
+  return $schema;
+}
+
+/**
+* Implements hook_flush_caches().
+*/
+function exove_module_flush_caches() {
+  return array('cu_campus_news');
+}
+
 function cu_campus_news_menu() {
   $items = array();
   $items['admin/config/system/cu-campus-news'] = array(
@@ -162,7 +178,7 @@ function cu_campus_news_preprocess_entity(&$vars) {
   $entity_type = $vars['elements']['#entity_type'];
   $bundle = $vars['elements']['#bundle'];
   if ($vars['elements']['#bundle'] == 'campus_news') {
-    // dpm($vars['bean']);
+
     // create cache ID
     $cid = 'campus_news:' . $vars['bean']->bid;
     $end_point = variable_get('cu_campus_news_url', 'http://www.colorado.edu/today') . '/' . variable_get('cu_campus_news_syndication', 'syndicate/article');
@@ -226,11 +242,11 @@ function cu_campus_news_preprocess_entity(&$vars) {
       $updated = drupal_json_decode($response->data, true);
     }
     if ($updated > $expire) {
-      cache_clear_all($cid, 'cache');
+      cache_clear_all($cid, 'cu_campus_news');
     }
 
     // Get cached version if available
-    if ($cache = cache_get($cid)) {
+    if ($cache = cache_get($cid, 'cu_campus_news')) {
       $nodes = drupal_json_decode($cache->data, true);
     }
     else {
@@ -238,7 +254,7 @@ function cu_campus_news_preprocess_entity(&$vars) {
       if ($response->code == '200') {
         $nodes = drupal_json_decode($response->data, true);
         // Save to cache
-        cache_set($cid, $response->data, 'cache', time() + 60 * 60);
+        cache_set($cid, $response->data, 'cu_campus_news', time() + 60 * 60);
       }
     }
 
@@ -284,6 +300,149 @@ function cu_campus_news_preprocess_entity(&$vars) {
     else {
       $vars['content'] = array();
     }
+  }
+  if ($vars['elements']['#bundle'] == 'campus_news_feature') {
+    // create cache ID
+    $cid = 'campus_news:' . $vars['bean']->bid;
+    $end_point = variable_get('cu_campus_news_url', 'http://www.colorado.edu/today') . '/' . variable_get('cu_campus_news_syndication', 'syndicate/article');
+
+    // Create query parameters
+    $query = array();
+    // Category parameters
+    $terms = array();
+    if (!empty($vars['bean']->field_campus_news_category)) {
+      $params = $vars['bean']->field_campus_news_category[LANGUAGE_NONE];
+      foreach ($params as $param) {
+        $terms[] = $param['value'];
+      }
+      $terms = join('+', $terms);
+      $query['category'] = $terms;
+    }
+
+
+    // Audience parameters
+    $terms = array();
+    if (!empty($vars['bean']->field_campus_news_audience)) {
+      $params = $vars['bean']->field_campus_news_audience[LANGUAGE_NONE];
+      foreach ($params as $param) {
+        $terms[] = $param['value'];
+      }
+      $terms = join('+', $terms);
+      $query['audience'] = $terms;
+    }
+
+
+    // Unit parameters
+    $terms = array();
+    if (!empty($vars['bean']->field_campus_news_unit)) {
+      $params = $vars['bean']->field_campus_news_unit[LANGUAGE_NONE];
+      foreach ($params as $param) {
+        $terms[] = $param['value'];
+      }
+      $terms = join('+', $terms);
+      $query['unit'] = $terms;
+    }
+
+    $feature_query = array();
+    $feature_query['feature'] = $query;
+    $feature_query['feature']['view_mode'] = 'feature';
+    $feature_query['feature']['items'] = 1;
+    $feature_query['sidebar'] = $query;
+    $feature_query['sidebar']['view_mode'] = 'sidebar';
+    $feature_query['sidebar']['items'] = 4;
+    $nodes = array();
+
+    foreach ($feature_query as $key => $query) {
+      // Build article content end point url
+      $end_point_full = url($end_point, array('query' => $query));
+      // Build last updated end point url
+      $query['updated'] = 1;
+      $end_point_updated = url($end_point, array('query' => $query));
+
+      // Compare last updated to expire time (now - 1 hour), clear cache if so
+      $expire = time() - 60 * 60;
+      $response = drupal_http_request($end_point_updated);
+      if ($response->code == '200') {
+        $updated = drupal_json_decode($response->data, true);
+      }
+      if ($updated > $expire) {
+        cache_clear_all($cid, 'cu_campus_news');
+      }
+
+      // Get cached version if available
+      if ($cache = cache_get($cid, 'cu_campus_news')) {
+        $nodes[$key] = drupal_json_decode($cache->data, true);
+      }
+      else {
+        $response = drupal_http_request($end_point_full);
+        if ($response->code == '200') {
+          $nodes[$key] = drupal_json_decode($response->data, true);
+          // Save to cache
+          cache_set($cid, $response->data, 'cu_campus_news', time() + 60 * 60);
+        }
+      }
+    }
+
+
+    // If articles are returned, send to theme functions and build output
+    $vars['content'] = array();
+    if (!empty($nodes) && !isset($nodes['error'])) {
+      $output = array();
+      foreach ($nodes['feature'] as $key => $node) {
+        $theme_function = 'campus_news__feature';
+        $output[$key]['#markup'] = theme($theme_function, $node);
+      }
+      $vars['content']['articles']['feature'] = $output;
+      $vars['content']['articles']['feature']['#prefix'] = '<div class="article-feature-top">';
+      $vars['content']['articles']['feature']['#suffix'] = '</div>';
+
+      $output = array();
+      // Remove first item from sidebar nodes since it was used already
+      if (!empty($nodes['sidebar'])) {
+        array_shift($nodes['sidebar']);
+      }
+      foreach ($nodes['sidebar'] as $key => $node) {
+        $theme_function = 'campus_news__sidebar';
+        $output[$key]['#markup'] = theme($theme_function, $node);
+      }
+      $vars['content']['articles']['sidebar'] = $output;
+      $vars['content']['articles']['sidebar']['#prefix'] = '<div class="article-feature-remaining clearfix">';
+      $vars['content']['articles']['sidebar']['#suffix'] = '</div>';
+
+      $vars['content']['#prefix'] = '<div class="article-feature article-feature-inline-3 campus-news-feature">';
+      $vars['content']['#suffix'] = '</div>';
+
+      // Grid needs additional markup
+      $link_classes = array();
+
+      $link_classes[] = 'button-ghost';
+
+
+      // Add link to CU Boulder Today
+      $link_text = variable_get('cu_campus_news_link_text', 'Read more at CU Boulder Today');
+      $link_url = variable_get('cu_campus_news_url', 'http://www.colorado.edu/today') . '/' . variable_get('cu_campus_news_link_path', 'syndicate/article/read');
+
+      if (!empty($query['updated'])) {
+        unset($query['updated']);
+      }
+      if (!empty($query['items'])) {
+        unset($query['items']);
+      }
+      if (!empty($query['view_mode'])) {
+        unset($query['view_mode']);
+      }
+
+      $vars['content']['cu_boulder_today_link']['#markup'] = l($link_text, $link_url, array('query' => $query, 'attributes' => array('class' => $link_classes)));
+      $vars['content']['cu_boulder_today_link']['#prefix'] = '<div class="campus-news-more-link">';
+      $vars['content']['cu_boulder_today_link']['#suffix'] = '</div>';
+
+      $vars['content']['articles']['#weight'] = 0;
+      $vars['content']['cu_boulder_today_link']['#weight'] = 10;
+    }
+    else {
+      $vars['content'] = array();
+    }
+
   }
 }
 
@@ -340,6 +499,10 @@ function cu_campus_news_theme(&$existing, $type, $theme, $path) {
     'template' => 'campus-news--grid',
     'path' => $template_dir,
   );
+  $registry['campus_news__feature'] = array(
+    'template' => 'campus-news--feature',
+    'path' => $template_dir,
+  );
   return $registry;
 }
 
@@ -364,7 +527,7 @@ function cu_campus_news_form_bean_form_alter(&$form, &$form_state, $form_id) {
 
 function cu_campus_news_cache_clear($form, &$form_state) {
   $cid = 'campus_news:' . $form['bean']['#value']->bid;
-  cache_clear_all($cid, 'cache');
+  cache_clear_all($cid, 'cu_campus_news');
 }
 
 /**
@@ -388,21 +551,31 @@ function cu_campus_news_secure_permissions($role) {
   $permissions = array(
     'anonymous user' => array(
       'view any campus_news bean',
+      'view any campus_news_feature bean',
     ),
     'authenticated user' => array(
       'view any campus_news bean',
+      'view any campus_news_feature bean',
     ),
     'administrator' => array(
       'create any campus_news bean',
       'delete any campus_news bean',
       'edit any campus_news bean',
       'view any campus_news bean',
+      'create any campus_news_feature bean',
+      'delete any campus_news_feature bean',
+      'edit any campus_news_feature bean',
+      'view any campus_news_feature bean',
     ),
     'content_editor' => array(
       'create any campus_news bean',
       'delete any campus_news bean',
       'edit any campus_news bean',
       'view any campus_news bean',
+      'create any campus_news_feature bean',
+      'delete any campus_news_feature bean',
+      'edit any campus_news_feature bean',
+      'view any campus_news_feature bean',
     ),
     'developer' => array(
       'create any campus_news bean',
@@ -410,12 +583,20 @@ function cu_campus_news_secure_permissions($role) {
       'edit any campus_news bean',
       'view any campus_news bean',
       'administer campus news',
+      'create any campus_news_feature bean',
+      'delete any campus_news_feature bean',
+      'edit any campus_news_feature bean',
+      'view any campus_news_feature bean',
     ),
     'site_owner' => array(
       'create any campus_news bean',
       'delete any campus_news bean',
       'edit any campus_news bean',
       'view any campus_news bean',
+      'create any campus_news_feature bean',
+      'delete any campus_news_feature bean',
+      'edit any campus_news_feature bean',
+      'view any campus_news_feature bean',
     ),
   );
 
