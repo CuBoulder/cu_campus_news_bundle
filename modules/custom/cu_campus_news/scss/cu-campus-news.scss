@@ -1,7 +1,7 @@
 .campus-news-more-link {
   clear: both;
   text-align: right;
-  
+
 }
 .campus-news-grid {
   overflow:hidden;
@@ -11,6 +11,12 @@
   .col-lg-5c:nth-child(5n+1) {
     clear:left;
   }
+  .campus-news-more-link {
+    padding:0 20px;
+    text-align: center;
+  }
+}
+.campus-news-feature {
   .campus-news-more-link {
     padding:0 20px;
     text-align: center;
