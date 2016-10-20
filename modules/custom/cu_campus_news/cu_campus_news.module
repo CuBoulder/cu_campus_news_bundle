@@ -349,7 +349,7 @@ function cu_campus_news_preprocess_entity(&$vars) {
     $feature_query['feature']['items'] = 1;
     $feature_query['sidebar'] = $query;
     $feature_query['sidebar']['view_mode'] = 'sidebar';
-    $feature_query['sidebar']['items'] = 4;
+    $feature_query['sidebar']['items'] = 5;
     $nodes = array();
 
     foreach ($feature_query as $key => $query) {
