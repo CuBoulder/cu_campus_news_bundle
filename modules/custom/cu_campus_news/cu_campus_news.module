@@ -9,7 +9,7 @@ include_once 'cu_campus_news.features.inc';
 /**
 * Implements hook_schema().
 */
-function exove_module_schema() {
+function cu_campus_news_module_schema() {
   $schema = array();
   $schema['cu_campus_news'] = drupal_get_schema_unprocessed('system', 'cache');
   return $schema;
@@ -18,7 +18,7 @@ function exove_module_schema() {
 /**
 * Implements hook_flush_caches().
 */
-function exove_module_flush_caches() {
+function cu_campus_news_flush_caches() {
   return array('cu_campus_news');
 }
 
@@ -722,4 +722,9 @@ function cu_campus_news_sort($a, $b) {
       return 0;
   }
   return ($a < $b) ? -1 : 1;
+}
+
+function cu_campus_news_placeholder_img($size = '600') {
+  $path = drupal_get_path('module', 'cu_campus_news') . '/images/placeholder-' . $size . '.jpg';
+  return url($path, array('absolute' => TRUE));
 }
