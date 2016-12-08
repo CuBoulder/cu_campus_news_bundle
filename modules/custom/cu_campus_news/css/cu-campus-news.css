@@ -5,3 +5,5 @@
 .campus-news-grid .campus-news-more-link { padding: 0 20px; text-align: center; }
 
 .campus-news-feature .campus-news-more-link { padding: 0 20px; text-align: center; }
+
+.bundle-type-campus-news h2:before { content: "\f19c"; }
