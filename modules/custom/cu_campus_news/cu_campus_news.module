@@ -728,3 +728,17 @@ function cu_campus_news_placeholder_img($size = '600') {
   $path = drupal_get_path('module', 'cu_campus_news') . '/images/placeholder-' . $size . '.jpg';
   return url($path, array('absolute' => TRUE));
 }
+
+/**
+ * Implements hook_express_bean_list_groups().
+ * Provided by express_add_content.api.php.
+ */
+function cu_campus_news_express_bean_list_groups($bundles) {
+
+
+  $bundles['campus_news']['title'] = 'Campus News';
+  $bundles['campus_news']['types'][] = 'Campus News';
+  $bundles['campus_news']['types'][] = 'Campus News Feature';
+
+  return $bundles;
+}
