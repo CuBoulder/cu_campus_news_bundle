@@ -517,7 +517,7 @@ function cu_campus_news_form_bean_form_alter(&$form, &$form_state, $form_id) {
     $response = drupal_http_request($end_point_updated);
     if ($response->code == '200') {
       $updated = drupal_json_decode($response->data, true);
-      if ($updated['error']) {
+      if (isset($updated['error'])) {
         drupal_set_message(t('Campus News syndication is currently disabled'), 'error');
         $form['actions']['submit']['#disabled'] = TRUE;
       }
