@@ -1,5 +1,5 @@
 
-<?php $tag = isset($heading_tag['#tag']) ? $heading_tag['#tag'] : 'h3'; ?>
+<?php $tag = isset($heading_tag['#tag']) ? $heading_tag['#tag'] : 'strong'; ?>
 <div class="article-view-mode-teaser node-view-mode-teaser clearfix">
   <?php if(!empty($thumbnail)): ?>
     <?php print $thumbnail; ?>
