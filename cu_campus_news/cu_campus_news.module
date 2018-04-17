@@ -6,14 +6,6 @@
 
 include_once 'cu_campus_news.features.inc';
 
-/**
-* Implements hook_schema().
-*/
-function cu_campus_news_module_schema() {
-  $schema = array();
-  $schema['cu_campus_news'] = drupal_get_schema_unprocessed('system', 'cache');
-  return $schema;
-}
 
 /**
 * Implements hook_flush_caches().
