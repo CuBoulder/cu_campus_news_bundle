@@ -392,6 +392,7 @@ function cu_campus_news_preprocess_entity(&$vars) {
       // Remove first item from sidebar nodes since it was used already
       if (!empty($nodes['sidebar'])) {
         array_shift($nodes['sidebar']);
+        $nodes['sidebar'] = array_slice($nodes['sidebar'],0,3);
       }
       foreach ($nodes['sidebar'] as $key => $node) {
         $theme_function = 'campus_news__sidebar';
@@ -401,7 +402,7 @@ function cu_campus_news_preprocess_entity(&$vars) {
       $vars['content']['articles']['sidebar']['#prefix'] = '<div class="article-feature-remaining clearfix">';
       $vars['content']['articles']['sidebar']['#suffix'] = '</div>';
 
-      $vars['content']['#prefix'] = '<div class="article-feature article-feature-inline-3 campus-news-feature">';
+      $vars['content']['#prefix'] = '<div class="article-feature article-feature-inline-3 campus-news-feature article-feature-stacked">';
       $vars['content']['#suffix'] = '</div>';
 
       // Grid needs additional markup
