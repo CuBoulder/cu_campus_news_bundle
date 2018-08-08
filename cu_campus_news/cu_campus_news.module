@@ -385,24 +385,23 @@ function cu_campus_news_preprocess_entity(&$vars) {
         $output[$key]['#markup'] = theme($theme_function, $node);
       }
       $vars['content']['articles']['feature'] = $output;
-      $vars['content']['articles']['feature']['#prefix'] = '<div class="article-feature-top">';
+      $vars['content']['articles']['feature']['#prefix'] = '<div class="article-feature-block-top col-lg-8 col-md-8 col-sm-8 col-xs-12">';
       $vars['content']['articles']['feature']['#suffix'] = '</div>';
 
       $output = array();
       // Remove first item from sidebar nodes since it was used already
       if (!empty($nodes['sidebar'])) {
         array_shift($nodes['sidebar']);
-        $nodes['sidebar'] = array_slice($nodes['sidebar'],0,3);
       }
       foreach ($nodes['sidebar'] as $key => $node) {
         $theme_function = 'campus_news__sidebar';
         $output[$key]['#markup'] = theme($theme_function, $node);
       }
       $vars['content']['articles']['sidebar'] = $output;
-      $vars['content']['articles']['sidebar']['#prefix'] = '<div class="article-feature-remaining clearfix">';
+      $vars['content']['articles']['sidebar']['#prefix'] = '<div class="article-feature-block-remaining col-lg-4 col-md-4 col-sm-4 col-xs-12 clearfix">';
       $vars['content']['articles']['sidebar']['#suffix'] = '</div>';
 
-      $vars['content']['#prefix'] = '<div class="article-feature article-feature-inline-3 campus-news-feature article-feature-stacked">';
+      $vars['content']['#prefix'] = '<div class="article-feature-block article-feature-inline-3 campus-news-feature row clearfix">';
       $vars['content']['#suffix'] = '</div>';
 
       // Grid needs additional markup
