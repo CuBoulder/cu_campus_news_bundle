@@ -401,7 +401,7 @@ function cu_campus_news_preprocess_entity(&$vars) {
       $vars['content']['articles']['sidebar']['#prefix'] = '<div class="article-feature-block-remaining col-lg-4 col-md-4 col-sm-4 col-xs-12 clearfix">';
       $vars['content']['articles']['sidebar']['#suffix'] = '</div>';
 
-      $vars['content']['#prefix'] = '<div class="article-feature-block article-feature-inline-3 campus-news-feature row">';
+      $vars['content']['#prefix'] = '<div class="article-feature-block article-feature-inline-3 campus-news-feature row clearfix">';
       $vars['content']['#suffix'] = '</div>';
 
       // Grid needs additional markup
