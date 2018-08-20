@@ -24,3 +24,4 @@ features[field_instance][] = bean-campus_news-field_campus_news_unit
 features[field_instance][] = bean-campus_news_feature-field_campus_news_audience
 features[field_instance][] = bean-campus_news_feature-field_campus_news_category
 features[field_instance][] = bean-campus_news_feature-field_campus_news_unit
+
